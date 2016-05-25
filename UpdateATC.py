@@ -6,19 +6,9 @@ import csv
 import logging
 import sys
 import httplib
-#httplib.HTTPConnection.debuglevel = 1
-#logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
-#logging.getLogger().setLevel(logging.DEBUG)
-#requests_log = logging.getLogger('requests.packages.urllib3')
-#requests_log.setLevel(logging.DEBUG)
-#requests_log.propagate = True
-#requests_log2 = logging.getLogger('requests.packages.urllib3.connectionpool')
-#requests_log2.setLevel(logging.DEBUG)
-#requests_log2.propagate = True
 #pdb.set_trace()
 from core.config import Config
 config=Config('config.ini')
-
 
 url = config.items('APM Server Configurations')['rest_url']
 authToken = config.items('APM Server Configurations')['atc_token']
@@ -45,10 +35,7 @@ for row in csmReader:
                 "id": vertex_id,
                 "attributes": row
             }]
-            #print update_payload
-            #print json.dumps(update_payload)
+ 
             response = requests.patch(url, verify=False, headers=headers, json=update_payload)
-            #print response
-            #print response.text
 csmFile.close()
 
