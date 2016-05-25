@@ -7,35 +7,84 @@ import csv
 from core.config import Config
 
 
-config = Config('config.ini')
+class APMAPI(object):
+    """API Client for accessing CA Application Performance Management.
 
-url = config.items('APM Server Configurations')['rest_url']
-auth_token = config.items('APM Server Configurations')['atc_token']
-file_path = config.items('APM Server Configurations')['file_path']
+    Args:
+        rest_url (str): The api url for APM.
+        atc_token (str): The authentication token to access the API.
+    """
 
-data = {'shortName': "sam"}
-data_json = json.dumps(data)
-headers = {'Content-type': 'application/hal+json;charset=utf-8','Authorization': 'Bearer ' + auth_token}
-response = requests.get(url, data=data_json, headers=headers, verify=False)
-all_elements = response.json()["_embedded"]["vertex"]
+    def __init__(self, rest_url, auth_token):
+        self.rest_url = rest_url
+        self.auth_token = auth_token
+        self.headers = {
+            'Content-type': 'application/hal+json;charset=utf-8',
+            'Authorization': 'Bearer {}'.format(self.auth_token)
+        }
 
-vertex_name_map = {}
-for el in all_elements:
-    if el.get('attributes', {}).get('hostname'):
-        vertex_name_map.setdefault(el['attributes']['hostname'], []).append(el['id'])
+    def get_vertex_map(self):
+        """Get the vertices defined in APM ATC as a dict from hostname to
+        list of integer IDs.
 
-csm_file = open(file_path, 'rb')
-csm_reader = csv.DictReader(csm_file)
-for row in csm_reader:
-    hostname = row['Hostname']
-    del row['Hostname']
-    if vertex_name_map.get(hostname):
-        for vertex_id in vertex_name_map[hostname]:
-            update_payload = [{
-                "id": vertex_id,
-                "attributes": row
-            }]
- 
-            response = requests.patch(url, verify=False, headers=headers, json=update_payload)
-csm_file.close()
+        Returns:
+            (Dict[str, List[int]]): The vertex mapping.
+        """
+        request_data = json.dumps({'shortName': 'sam'})
+        response = requests.get(self.rest_url, data=request_data,
+                                headers=self.headers, verify=False)
+        vertices = response.json()['_embedded']['vertex']
+        vertex_map = {}
+        for vertex in vertices:
+            # If the vertex has a hostname
+            if vertex.get('attributes', {}).get('hostname'):
+                # Append its ID to the list of IDs for that hostname
+                vertex_map.\
+                        setdefault(vertex['attributes']['hostname'], []).\
+                        append(vertex['id'])
+        return vertex_map
 
+    def update_vertex(self, vertex_id, attributes):
+        """Update a vertex in APM ATC with the supplied attributes.
+
+        Args:
+            vertex_id (int): The ID of the vertex to update.
+            attributes (dict[str, Any]): The attributes to update on the
+                vertex.
+
+        Returns:
+            (request.models.Response): The HTTP request's response.
+        """
+        update_payload = [{
+            'id': vertex_id,
+            'attributes': attributes
+        }]
+        response = requests.patch(self.rest_url, json=update_payload,
+                                  headers=self.headers, verify=False)
+        return response
+
+
+def main():
+    """Main program logic."""
+    config_section = 'APM Server Configurations'
+    config = Config('config.ini')
+
+    rest_url = config.items(config_section)['rest_url']
+    auth_token = config.items(config_section)['auth_token']
+    file_path = config.items(config_section)['file_path']
+
+    apm_api = APMAPI(rest_url, auth_token)
+    vertex_map = apm_api.get_vertex_map()
+
+    with open(file_path, 'rb') as csm_file:
+        for row in csv.DictReader(csm_file):
+            hostname = row['Hostname']
+            # The Hostname attribute should not be part of the update attrs
+            del row['Hostname']
+            if vertex_map.get(hostname):
+                for vertex_id in vertex_map[hostname]:
+                    apm_api.update_vertex(vertex_id, row)
+
+
+if __name__ == '__main__':
+    main()
