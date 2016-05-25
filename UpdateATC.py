@@ -16,12 +16,17 @@ import httplib
 #requests_log2.setLevel(logging.DEBUG)
 #requests_log2.propagate = True
 #pdb.set_trace()
+from core.config import Config
+config=Config('config.ini')
 
-url = 'https://10.144.7.38:8444/apm/appmap/vertex'
+
+url = config.items('APM Server Configurations')['rest_url']
+authToken = config.items('APM Server Configurations')['atc_token']
+filePath = config.items('APM Server Configurations')['file_path']
 
 data = {'shortName': "sam"}
 data_json = json.dumps(data)
-headers = {'Content-type': 'application/hal+json;charset=utf-8','Authorization': 'Bearer e7130a9d-2886-4af2-ac4d-5c1655059b29'}
+headers = {'Content-type': 'application/hal+json;charset=utf-8','Authorization': 'Bearer ' + authToken}
 response = requests.get(url, data=data_json, headers=headers, verify=False)
 allElements = response.json()["_embedded"]["vertex"]
 
@@ -29,7 +34,7 @@ vertex_name_map = {}
 for el in allElements:
     if el.get('attributes', {}).get('hostname'):
         vertex_name_map.setdefault(el['attributes']['hostname'], []).append(el['id'])
-csmFile=open(r"c:\Dumps\appdata.csv", 'rb')
+csmFile=open(filePath, 'rb')
 csmReader = csv.DictReader(csmFile)
 for row in csmReader:
     hostname = row['Hostname']
