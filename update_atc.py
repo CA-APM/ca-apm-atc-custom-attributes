@@ -68,7 +68,7 @@ class APMAPI(object):
 def main():
     """Main program logic."""
     config_section = 'APM Server Configurations'
-    config = Config('config.ini')
+    config = Config('config.ini', encrypted_keys=('auth_token',))
 
     rest_url = config.items(config_section)['rest_url']
     auth_token = config.items(config_section)['auth_token']
