@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+# pylint: disable=too-many-locals
 """Update APM ATC with attributes extracted from CMDB."""
 import requests
 import json
@@ -72,18 +73,27 @@ def main():
     rest_url = config.items(config_section)['rest_url']
     auth_token = config.items(config_section)['auth_token']
     file_path = config.items(config_section)['file_path']
+    output_file_path = config.items(config_section)['output_file_path']
 
     apm_api = APMAPI(rest_url, auth_token)
     vertex_map = apm_api.get_vertex_map()
 
-    with open(file_path, 'rb') as csm_file:
-        for row in csv.DictReader(csm_file):
+    with open(file_path, 'rb') as csm_file, \
+            open(output_file_path, 'wb') as output_file:
+        output_csv = csv.writer(output_file)
+        output_csv.writerow(['Row', 'Hostname', 'Vertex ID',
+                             'API Call Status Code', 'API Call Response Text'])
+        for index, row in enumerate(csv.DictReader(csm_file)):
             hostname = row['Hostname']
             # The Hostname attribute should not be part of the update attrs
             del row['Hostname']
             if vertex_map.get(hostname):
                 for vertex_id in vertex_map[hostname]:
-                    apm_api.update_vertex(vertex_id, row)
+                    response = apm_api.update_vertex(vertex_id, row)
+                    output_csv.writerow([index, hostname, vertex_id,
+                                         response.status_code, response.text])
+            else:
+                output_csv.writerow([index, hostname, 'No vertices'])
 
 
 if __name__ == '__main__':
