@@ -1,13 +1,11 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""Update APM ATC with attributes extracted from CMDB."""
 import requests
 import json
-import ast
 import csv
-#import pdb
-import logging
-import sys
-import httplib
-#pdb.set_trace()
 from core.config import Config
+
 config=Config('config.ini')
 
 url = config.items('APM Server Configurations')['rest_url']
