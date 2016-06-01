@@ -74,6 +74,7 @@ def main():
     auth_token = config.items(config_section)['auth_token']
     file_path = config.items(config_section)['file_path']
     output_file_path = config.items(config_section)['output_file_path']
+    key_column = config.items(config_section)['key_column']
 
     apm_api = APMAPI(rest_url, auth_token)
     vertex_map = apm_api.get_vertex_map()
@@ -81,12 +82,12 @@ def main():
     with open(file_path, 'rb') as csm_file, \
             open(output_file_path, 'wb') as output_file:
         output_csv = csv.writer(output_file)
-        output_csv.writerow(['Row', 'Hostname', 'Vertex ID',
+        output_csv.writerow(['Row', key_column, 'Vertex ID',
                              'API Call Status Code', 'API Call Response Text'])
         for index, row in enumerate(csv.DictReader(csm_file)):
-            hostname = row['Hostname']
+            hostname = row[key_column]
             # The Hostname attribute should not be part of the update attrs
-            del row['Hostname']
+            del row[key_column]
             if vertex_map.get(hostname):
                 for vertex_id in vertex_map[hostname]:
                     response = apm_api.update_vertex(vertex_id, row)
