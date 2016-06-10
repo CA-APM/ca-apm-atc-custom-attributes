@@ -101,9 +101,7 @@ If you wish to contribute to this or any other project, please refer to [easy in
 
 ## Categories
 
-*Delete this line, and delete all that do not apply from the below list.  Mandatory for APM Marketplace.*
-
-Cloud Integration Middleware/ESB Mobile .NET Big Data Browser Database DevOps Examples Frameworks Packaged Applications Portal Reporting Server Monitoring Virtualization/Containers Visualization
+Integration
 
 
 # Change log
