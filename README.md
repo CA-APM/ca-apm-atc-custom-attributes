@@ -63,9 +63,9 @@ APM REST API
 3. Create your Custom Perspectives in APM/ATC with the new attributes. APM 10.2 onwards you can 'Filter' using the custom attributes
 
 ##Sample CSV file format
-Hostname,Application Group, Business Owner, Technical Owner
-server1,app_frontoffice, Scott, Bob
-server2,app_frontoffice, Scott, Bob
+*Hostname,Application Group, Business Owner, Technical Owner*
+*server1,app_frontoffice, Scott, Bob*
+*server2,app_frontoffice, Scott, Bob*
 
 # Usage Instructions
 *How to use the field pack.*
