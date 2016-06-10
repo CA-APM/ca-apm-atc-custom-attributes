@@ -92,19 +92,7 @@ Although these utilities are unsupported, please let us know if you have any pro
 Unless explicitly stated otherwise this field pack is only supported on the same platforms as the APM core agent. See [APM Compatibility Guide](http://www.ca.com/us/support/ca-support-online/product-content/status/compatibility-matrix/application-performance-management-compatibility-guide.aspx).
 
 ### Support URL
-*Mandatory for the APM marketplace*
-
-*if officially supported*
-
-https://support.ca.com
-
-*if community supported add a link to the github.com issue tracker eg*
-
-https://github.com/CA-APM/ca-apm-fieldpack-epa-aix/issues
-
-*if closed source, not supported, then create an empty github.com repository, and link github issue tracker as a courtesy*
-
-https://github.com/CA-APM/ca-apm-fieldpack-epa-aix/issues
+https://github-isl-01.ca.com/GIS/APM-ATC-Custom-Attributes/issues
 
 # Contributing
 The [CA APM Community](https://communities.ca.com/community/ca-apm) is the primary means of interfacing with other users and with the CA APM product team.  The [developer subcommunity](https://communities.ca.com/community/ca-apm/ca-developer-apm) is where you can learn more about building APM-based assets, find code examples, and ask questions of other developers and the CA APM product team.
