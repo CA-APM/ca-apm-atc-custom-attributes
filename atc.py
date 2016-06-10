@@ -1,10 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # pylint: disable=too-many-locals
-"""Update APM ATC with attributes extracted from CMDB."""
+# This is developed by GIS Tools And Automation Group - GADPR07, axmje01
+# June 2016
+"""Create/Update APM ATC attributes from a CSV."""
 import requests
 import json
 import csv
+
 from core.config import Config
 
 
