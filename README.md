@@ -12,6 +12,7 @@ This field pack helps create/update custom attributes in ATC
 
 *A description of less that 140 characters long, required for APM Marketplace*
 To better organise the vertices and integrate with other tools, it is easier to leverage the APM ATC custom attributes.
+
 This script GETs the Hostname from APM/ATC and looks for Hostname from a CSV file and using ATC RestAPI updates/create the the vertices  attributes with the columns in the csv.
 The first row will be considered as Headers which will be the Custom Attributes in APM/ATC
 
@@ -63,9 +64,11 @@ APM REST API
 3. Create your Custom Perspectives in APM/ATC with the new attributes. APM 10.2 onwards you can 'Filter' using the custom attributes
 
 ##Sample CSV file format
-*Hostname,Application Group, Business Owner, Technical Owner*
-*server1,app_frontoffice, Scott, Bob*
-*server2,app_frontoffice, Scott, Bob*
+Hostname,Application Group, Business Owner, Technical Owner
+
+server1,app_frontoffice, Scott, Bob
+
+server2,app_frontoffice, Scott, Bob
 
 # Usage Instructions
 *How to use the field pack.*
