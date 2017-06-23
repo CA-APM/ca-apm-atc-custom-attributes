@@ -2,8 +2,16 @@
 # -*- coding: utf-8 -*-
 """Class for working with encrypted config files."""
 from __future__ import print_function
-import configparser
 import base64
+import sys
+
+if (sys.version_info > (3, 0)):
+    # Python 3 code in this block
+    import configparser
+else:
+    # Python 2 code in this block
+    import ConfigParser as configparser
+
 
 ENCRYPTED_KEYS = (
     'password',
