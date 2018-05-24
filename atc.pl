@@ -15,17 +15,20 @@ my $log;
 #
 sub read_properties {
     print "opening config.ini\n" if ($debug > 0);
-   
+
     open my $fh, '<', 'config.ini'
         or die "unable to open configuration file";
 
     $properties = Config::Properties->new();
     $properties->load($fh);
-	
+
 	# set debug level and open log file
 	$debug = $properties->getProperty('debug', 1);
+
 	my $logfile = $properties->getProperty('output_file_path', 'atc.log');
+	$logfile =~ s/\s+$//; # remove trailing whitespace
 	open($log, '>', $logfile);
+
 	print "logging to $logfile\n" if ($debug > 0);
 	print $log "finished reading properties\n\n" if ($debug > 0);
 }
@@ -41,13 +44,14 @@ sub init_restapi() {
 sub read_csv {
 
     my $file = $properties->getProperty('file_path') or die "Need to get CSV file in config.ini\n";
+	$file =~ s/\s+$//; # remove trailing whitespace
 
     print $log "opening $file\n" if ($debug > 0);
 
     open(my $data, '<', $file) or die "Could not open '$file' $!\n";
 
     my $line = <$data>;
-    while ($line =~ /[\n\r]$/) { chop $line; }
+    while ($line =~ /[\n\r]$/) { chop $line; } # dos2unix
     @keys = split /,/, $line;
 
     my $key_column = $properties->getProperty('key_column');
@@ -68,7 +72,8 @@ sub read_csv {
     my %result;
     while ($line = <$data>) {
         print $log "read line = $line" if ($debug > 1);
-		while ($line =~ /[\n\r]$/) { chop $line; }
+		while ($line =~ /[\n\r]$/) { chop $line; } # dos2unix
+
         my @attributes = split /,/, $line;
         my $key = $attributes[$i];
         splice(@attributes, $i, 1);
@@ -175,7 +180,7 @@ sub update_vertex_map {
 		my $i=0;
 		my @test = @{$attributes{$hostname}};
 		print $log Dumper \@test if ($debug > 2);
-		
+
 		for my $attr (@{$attributes{$hostname}}) {
 			print $log "adding attribute " . $keys[$i] . " = $attr\n" if ($debug > 2);
 			my @array;
@@ -183,7 +188,7 @@ sub update_vertex_map {
 			$update{'attributes'}{$keys[$i]} = \@array;
 			$i = $i + 1;
 			print $log Dumper %update if ($debug > 2);
-		
+
 		}
 		push @items, \%update;
 	}
@@ -191,13 +196,13 @@ sub update_vertex_map {
 	my %patch;
 	$patch{'items'} = \@items;
 	my $json = encode_json(\%patch);
-	
+
 	print $log "finished creating json for Teamcenter update\n\n" if ($debug > 0);
 	print $log $json. "\n" if ($debug > 1);
 	print $log "updating vertices in APM Teamcenter\n" if ($debug > 0);
-	
+
 	$client->PATCH($properties->getProperty('rest_url'), $json);
-   
+
     if ($client->responseCode() ne '200') {
         die $client->responseContent();
     }
