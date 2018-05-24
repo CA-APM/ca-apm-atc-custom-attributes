@@ -1,7 +1,7 @@
 # Auto Create/Update ATC Custom Attributes
 
 # Description
-This python script creates n/or updates custom attributes in CA APM Team Center (ATC) from a CSV file.
+This python or perl script creates n/or updates custom attributes in CA APM Team Center (ATC) from a CSV file.
 
 To better organize the vertices and integrate with other tools, it is easier to leverage the APM ATC custom attributes.
 
@@ -9,7 +9,7 @@ This script reads the vertices from ATC, matches a key attribute (e.g. Hostname)
 
 ## Short Description
 
-This python script creates and/or updates custom attributes in CA APM Team Center from a CSV file.
+This python or perl script creates and/or updates custom attributes in CA APM Team Center from a CSV file.
 
 ## APM version
 Tested with APM 10.5.1. Will not work with APM 10.3 and lower.
@@ -34,11 +34,17 @@ Please review the [LICENSE](LICENSE) file in this repository.  Licenses may vary
 ](https://docops.ca.com/ca-apm/10-5/en/integrating/api-reference-guide/apm-rest-api) for more information.
 3. Export data from external data sources (for example CMDB data, Change Orders, etc).
 
+For perl the following modules need to be installed (see http://www.cpan.org/modules/INSTALL.html):
+1. REST::Client
+2. Config::Properties
+3. JSON
+4. Data::Dumper
+
 ## Dependencies
 APM-ATC REST API must be enabled.
 
 ## Installation
-Copy and extract the atc-custom-attributes.zip.
+Copy and extract the `atc-custom-attributes.zip`.
 
 ## Configuration
 Update the `config.ini` file with your CA APM MOM or Enterprise Team Center server details and the path to the CSV file. E.g.:
@@ -51,6 +57,8 @@ file_path = test.csv
 output_file_path = test.log
 key_column = Hostname
 key_attribute = hostname
+# 0 for not output, 1 for INFO (default), 2 for DEBUG
+debug = 1
 ```
 
 1. The first (header) row of the CSV file will be used as attribute names/keys to create/update the ATC attributes. So create the CSV accordingly.
@@ -66,7 +74,7 @@ server2,app_frontoffice, Scott, Bob
 ```
 
 # Usage Instructions
-Run `python3 atc.py` from the command line.
+Run `python3 atc.py` from the command line or run `perl atc.pl`.
 
 ## Debugging and Troubleshooting
 Refer the log file name mentioned in the `config.ini` file to review the rows which are updated.
