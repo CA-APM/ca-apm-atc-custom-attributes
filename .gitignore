@@ -6,3 +6,5 @@ build
 *.log
 *.csv
 *.bak
+*.json
+.DS_Store
